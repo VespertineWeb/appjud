@@ -1,6 +1,6 @@
 {
     "functions": {
-      "api/check-processes.js": {
+      "pages/api/check-processes.js": {
         "maxDuration": 30
       }
     }
