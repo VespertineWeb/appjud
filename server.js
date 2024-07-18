@@ -1,7 +1,6 @@
 const express = require('express');
 const next = require('next');
 const mongoose = require('mongoose');
-const { sendNotification } = require('./utils/sendNotification');
 const checkUpdates = require('./utils/checkUpdates');
 
 const dev = process.env.NODE_ENV !== 'production';

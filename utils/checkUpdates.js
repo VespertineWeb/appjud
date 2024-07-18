@@ -1,5 +1,6 @@
 const axios = require('axios');
 const endpoints = require('./endpoints');
+const { sendWhatsAppNotification } = require('./sendNotification');
 
 const API_KEY = 'cDZHYzlZa0JadVREZDJCendQbXY6SkJlTzNjLV9TRENyQk1RdnFKZGRQdw=='; // Substitua pela sua chave pública
 
@@ -27,6 +28,7 @@ const checkUpdates = async (client) => {
         const updateDetails = processUpdates[0]._source;
         // Logica para enviar notificações ou atualizar a UI
         console.log(`Atualização no processo ${client.caseNumber}: ${JSON.stringify(updateDetails)}`);
+        sendWhatsAppNotification(client.phone, `Atualização no processo ${client.caseNumber}: ${JSON.stringify(updateDetails)}`);
         return updateDetails;
       }
     } catch (error) {
