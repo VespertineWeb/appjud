@@ -18,13 +18,19 @@ app.prepare().then(() => {
 
   // Configurar CORS
   const corsOptions = {
-    origin: '*', // Permitir todas as origens, ajuste conforme necessário
-    optionsSuccessStatus: 200,
+    origin: ['https://appjud-ghmfaevia-afchristianns-projects.vercel.app', 'https://appjud.vercel.app'], // Origem permitida
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    preflightContinue: false,
+    optionsSuccessStatus: 204,
+    allowedHeaders: ['Content-Type', 'Authorization']
   };
 
   server.use(cors(corsOptions));
 
+  server.options('*', cors(corsOptions)); // Enable pre-flight for all routes
+
   server.all('*', (req, res) => {
+    res.header('Access-Control-Allow-Origin', '*'); // Adicionar o cabeçalho diretamente
     return handle(req, res);
   });
 
