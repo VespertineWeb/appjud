@@ -32,7 +32,7 @@ export default async function handler(req, res) {
   switch (method) {
     case 'POST':
       try {
-        console.log('Request body:', req.body);
+        console.log('Request body:', req.body); // Log do corpo da solicitação
         const advocate = await Advocate.create(req.body);
         console.log('Advocate created:', advocate);
         res.status(201).json({ success: true, data: advocate });

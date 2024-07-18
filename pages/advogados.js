@@ -1,21 +1,43 @@
-import React from 'react';
-import dbConnect from '../utils/dbConnect';
-import Advocate from '../models/Advocate';
+import React, { useState } from 'react';
+import axios from 'axios';
 
-export default function AdvocatesPage() {
-  return <div>Advocates Page</div>;
-}
+const AdvocatesPage = () => {
+  const [name, setName] = useState('');
+  const [phone, setPhone] = useState('');
+  const [clients, setClients] = useState([]);
 
-// Defina aqui a função de data fetching se necessário
-
-export async function getServerSideProps(context) {
-  console.log('Connecting to database...');
-  await dbConnect();
-  console.log('Database connected.');
-
-  // Você pode adicionar aqui qualquer lógica adicional para buscar dados
-
-  return {
-    props: {}, // Será passado para o componente AdvocatesPage como props
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post('/api/advocates', {
+        name,
+        phone,
+        clients,
+      });
+      console.log('Advocate created:', response.data);
+    } catch (error) {
+      console.error('Error creating advocate:', error);
+    }
   };
-}
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <input
+        type="text"
+        placeholder="Name"
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+      />
+      <input
+        type="text"
+        placeholder="Phone"
+        value={phone}
+        onChange={(e) => setPhone(e.target.value)}
+      />
+      {/* Adicionar campos para clientes conforme necessário */}
+      <button type="submit">Create Advocate</button>
+    </form>
+  );
+};
+
+export default AdvocatesPage;
