@@ -1,0 +1,8 @@
+{
+    "functions": {
+      "api/check-processes.js": {
+        "maxDuration": 30
+      }
+    }
+  }
+  
