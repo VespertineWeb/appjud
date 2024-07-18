@@ -5,7 +5,7 @@ import Cors from 'cors';
 // Inicializar o middleware de CORS
 const cors = Cors({
   methods: ['POST', 'GET', 'HEAD'],
-  origin: '*', // Altere isso conforme necessário para restringir o acesso
+  origin: '*' // Altere isso conforme necessário para restringir o acesso
 });
 
 // Função auxiliar para rodar o middleware
