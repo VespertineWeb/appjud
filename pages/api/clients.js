@@ -1,4 +1,3 @@
-// pages/api/clients.js
 import dbConnect from '../../utils/dbConnect';
 import Client from '../../models/Client';
 
@@ -13,11 +12,12 @@ export default async function handler(req, res) {
         const client = await Client.create(req.body);
         res.status(201).json({ success: true, data: client });
       } catch (error) {
-        res.status(400).json({ success: false });
+        res.status(400).json({ success: false, error: error.message });
       }
       break;
     default:
-      res.status(400).json({ success: false });
+      res.setHeader('Allow', ['POST']);
+      res.status(405).end(`Method ${method} Not Allowed`);
       break;
   }
 }
