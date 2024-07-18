@@ -7,12 +7,22 @@ export default async function handler(req, res) {
     await dbConnect();
     const clients = await Client.find({});
 
-    // Realizar todas as checagens de processos em paralelo
-    await Promise.all(clients.map(client => checkUpdates(client)));
+    const updates = [];
 
-    res.status(200).json({ message: 'Process updates checked successfully' });
+    for (const client of clients) {
+      const hasUpdates = await checkUpdates(client);
+      if (hasUpdates) {
+        updates.push({
+          caseNumber: client.caseNumber,
+          updateDetails: hasUpdates
+        });
+      }
+    }
+
+    // Redirecionar para a página de resultados com os dados de atualização
+    res.redirect(`/updates?results=${encodeURIComponent(JSON.stringify(updates))}`);
   } catch (error) {
-    console.error('Erro ao verificar atualizações de processos:', error);
-    res.status(500).json({ error: 'Erro ao verificar atualizações de processos' });
+    console.error(error);
+    res.status(500).json({ message: 'Internal Server Error' });
   }
 }
