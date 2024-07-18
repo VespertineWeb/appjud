@@ -2,7 +2,7 @@ import dbConnect from '../../utils/dbConnect';
 import Process from '../../models/Process';
 import Client from '../../models/Client';
 import Advocate from '../../models/Advocate';
-import sendNotification from '../../utils/sendNotification';
+import { sendWhatsAppNotification } from '../../utils/sendNotification';
 const checkUpdates = require('../../utils/checkUpdates');
 
 export default async function handler(req, res) {
@@ -19,11 +19,11 @@ export default async function handler(req, res) {
         const advocates = await Advocate.find({ clients: clients.map(client => client._id) });
 
         for (let client of clients) {
-          await sendNotification(client.phone, `Atualização no processo ${process.caseNumber}: ${updateDetails}`);
+          await sendWhatsAppNotification(client.phone, `Atualização no processo ${process.caseNumber}: ${updateDetails}`);
         }
 
         for (let advocate of advocates) {
-          await sendNotification(advocate.phone, `Atualização no processo ${process.caseNumber} de seu cliente: ${updateDetails}`);
+          await sendWhatsAppNotification(advocate.phone, `Atualização no processo ${process.caseNumber} de seu cliente: ${updateDetails}`);
         }
 
         process.lastChecked = new Date();

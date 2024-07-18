@@ -1,5 +1,5 @@
 const axios = require('axios');
-const sendWhatsAppNotification = require('./sendNotification');
+const { sendWhatsAppNotification } = require('./sendNotification');
 const endpoints = require('./endpoints');
 const dbConnect = require('./dbConnect');
 const Process = require('../models/Process');
