@@ -34,7 +34,6 @@ const AdvocatesPage = () => {
         value={phone}
         onChange={(e) => setPhone(e.target.value)}
       />
-      {/* Adicionar campos para clientes conforme necessário */}
       <button type="submit">Create Advocate</button>
     </form>
   );
