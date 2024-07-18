@@ -6,46 +6,24 @@ const Process = require('../models/Process');
 const Client = require('../models/Client');
 const Advocate = require('../models/Advocate');
 
-const checkUpdates = async () => {
-  await dbConnect();
+const checkUpdates = async (caseNumber) => {
+  for (let key in endpoints) {
+    const apiUrl = endpoints[key];
 
-  try {
-    const processes = await Process.find({});
+    try {
+      const response = await axios.get(`${apiUrl}?caseNumber=${caseNumber}`);
+      const processUpdates = response.data;
 
-    for (let process of processes) {
-      const caseNumber = process.caseNumber;
-
-      for (let key in endpoints) {
-        const apiUrl = endpoints[key];
-
-        try {
-          const response = await axios.get(`${apiUrl}?caseNumber=${caseNumber}`);
-          const processUpdates = response.data;
-
-          // Lógica para verificar atualizações
-          if (processUpdates.hasUpdates) {
-            const clients = await Client.find({ caseNumber: caseNumber });
-            const advocates = await Advocate.find({ clients: { $in: clients.map(client => client._id) } });
-
-            for (let client of clients) {
-              await sendWhatsAppNotification(client.phone, `Atualização no processo ${caseNumber}: ${processUpdates.updateDetails}`);
-            }
-
-            for (let advocate of advocates) {
-              await sendWhatsAppNotification(advocate.phone, `Atualização no processo ${caseNumber} de seu cliente: ${processUpdates.updateDetails}`);
-            }
-
-            process.lastChecked = new Date();
-            await process.save();
-          }
-        } catch (error) {
-          console.error(`Erro ao consultar atualizações do processo no endpoint ${key}:`, error);
-        }
+      // Lógica para verificar atualizações
+      if (processUpdates.hasUpdates) {
+        return { hasUpdates: true, updateDetails: processUpdates.updateDetails };
       }
+    } catch (error) {
+      console.error(`Erro ao consultar atualizações do processo no endpoint ${key}:`, error);
     }
-  } catch (error) {
-    console.error('Erro ao verificar atualizações dos processos:', error);
   }
+
+  return { hasUpdates: false };
 };
 
 module.exports = checkUpdates;
