@@ -1,8 +1,10 @@
 {
-    "functions": {
-      "pages/api/check-processes.js": {
-        "maxDuration": 30
-      }
-    }
+    "version": 2,
+    "builds": [
+      { "src": "pages/api/*.js", "use": "@vercel/node" }
+    ],
+    "routes": [
+      { "src": "/api/(.*)", "dest": "/api/$1" }
+    ]
   }
   
