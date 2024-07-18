@@ -1,29 +1,35 @@
 const axios = require('axios');
 const { sendWhatsAppNotification } = require('./sendNotification');
 const endpoints = require('./endpoints');
-const dbConnect = require('./dbConnect');
-const Process = require('../models/Process');
-const Client = require('../models/Client');
-const Advocate = require('../models/Advocate');
 
-const checkUpdates = async (caseNumber) => {
-  for (let key in endpoints) {
-    const apiUrl = endpoints[key];
+const checkUpdates = async () => {
+  const clients = await Client.find(); // Certifique-se de que o modelo Client está sendo importado corretamente.
 
-    try {
-      const response = await axios.get(`${apiUrl}?caseNumber=${caseNumber}`);
-      const processUpdates = response.data;
-
-      // Lógica para verificar atualizações
-      if (processUpdates.hasUpdates) {
-        return { hasUpdates: true, updateDetails: processUpdates.updateDetails };
+  for (const client of clients) {
+    const processNumber = client.caseNumber;
+    const promises = Object.values(endpoints).map(async (url) => {
+      try {
+        const response = await axios.get(`${url}/${processNumber}`);
+        const processUpdates = response.data;
+        if (processUpdates && processUpdates.length > 0) {
+          return {
+            url,
+            updates: processUpdates
+          };
+        }
+      } catch (error) {
+        console.error(`Erro ao consultar atualizações no endpoint ${url}:`, error);
       }
-    } catch (error) {
-      console.error(`Erro ao consultar atualizações do processo no endpoint ${key}:`, error);
+      return null;
+    });
+
+    const results = await Promise.all(promises);
+
+    const updates = results.filter(result => result !== null);
+    if (updates.length > 0) {
+      sendWhatsAppNotification(client.phone, `Atualização no processo ${client.caseNumber}: ${updates.map(u => u.updates).join(', ')}`);
     }
   }
-
-  return { hasUpdates: false };
 };
 
 module.exports = checkUpdates;

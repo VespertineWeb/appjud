@@ -10,9 +10,9 @@ sendpulse.init(SENDPULSE_USER_ID, SENDPULSE_SECRET, SENDPULSE_TOKEN_STORAGE, () 
 
 export const sendWhatsAppNotification = (phone, message) => {
   const data = {
-    phone: phone,
-    message: message,
-    sender: 'YourSenderID',
+    "phone": phone,
+    "message": message,
+    "sender": "YourSenderID",
   };
 
   sendpulse.whatsappSendMessage(data, (response) => {
