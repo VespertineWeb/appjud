@@ -15,6 +15,7 @@ export default async function handler(req, res) {
         console.log('Request body:', req.body);
         
         const client = await Client.create(req.body);
+        console.log('Client created:', client);
         res.status(201).json({ success: true, data: client });
       } catch (error) {
         // Log para capturar detalhes adicionais do erro
