@@ -1,8 +1,10 @@
 import axios from 'axios';
 
 const instance = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL || 'https://appjud.vercel.app',
-  timeout: 15000, // Aumente o timeout se necessário
+  baseURL: process.env.NODE_ENV === 'production' ? 'https://appjud.vercel.app' : 'http://localhost:3000',
+  headers: {
+    'Content-Type': 'application/json',
+  },
 });
 
 export default instance;
