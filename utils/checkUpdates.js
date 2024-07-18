@@ -8,16 +8,16 @@ const Advocate = require('../models/Advocate');
 
 const checkUpdates = async () => {
   await dbConnect();
-  
+
   try {
     const processes = await Process.find({});
-    
+
     for (let process of processes) {
       const caseNumber = process.caseNumber;
-      
+
       for (let key in endpoints) {
         const apiUrl = endpoints[key];
-        
+
         try {
           const response = await axios.get(`${apiUrl}?caseNumber=${caseNumber}`);
           const processUpdates = response.data;
@@ -25,7 +25,7 @@ const checkUpdates = async () => {
           // Lógica para verificar atualizações
           if (processUpdates.hasUpdates) {
             const clients = await Client.find({ caseNumber: caseNumber });
-            const advocates = await Advocate.find({ clients: clients.map(client => client._id) });
+            const advocates = await Advocate.find({ clients: { $in: clients.map(client => client._id) } });
 
             for (let client of clients) {
               await sendWhatsAppNotification(client.phone, `Atualização no processo ${caseNumber}: ${processUpdates.updateDetails}`);

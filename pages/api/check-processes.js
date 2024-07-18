@@ -10,13 +10,13 @@ export default async function handler(req, res) {
 
   try {
     const processes = await Process.find({});
-    
+
     for (let process of processes) {
       const { hasUpdates, updateDetails } = await checkUpdates(process.caseNumber);
 
       if (hasUpdates) {
         const clients = await Client.find({ caseNumber: process.caseNumber });
-        const advocates = await Advocate.find({ clients: clients.map(client => client._id) });
+        const advocates = await Advocate.find({ clients: { $in: clients.map(client => client._id) } });
 
         for (let client of clients) {
           await sendWhatsAppNotification(client.phone, `Atualização no processo ${process.caseNumber}: ${updateDetails}`);
