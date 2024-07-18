@@ -8,7 +8,6 @@ async function dbConnect() {
     return;
   }
 
-  // Adicionar logs para verificar a URL do MongoDB
   console.log('MongoDB URI:', process.env.MONGODB_URI);
 
   try {
@@ -22,6 +21,7 @@ async function dbConnect() {
     console.log('Database connected:', connection.isConnected);
   } catch (error) {
     console.error('Database connection error:', error);
+    throw new Error('Database connection failed.');
   }
 }
 
