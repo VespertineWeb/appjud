@@ -1,49 +1,29 @@
 const express = require('express');
+const next = require('next');
 const mongoose = require('mongoose');
-const dotenv = require('dotenv');
-const helmet = require('helmet');
-
-const clientsRouter = require('./routes/clients');
-const advocatesRouter = require('./routes/advocates');
+const { sendNotification } = require('./utils/sendNotificantio');
 const checkUpdates = require('./utils/checkUpdates');
-const Client = require('./models/Client');
 
-dotenv.config();
+const dev = process.env.NODE_ENV !== 'production';
+const app = next({ dev });
+const handle = app.getRequestHandler();
 
-const app = express();
-const port = process.env.PORT || 3000;
-
-// Middleware
-app.use(express.json());
-app.use(helmet());
-
-// Conexão com MongoDB
 mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
-  useUnifiedTopology: true,
-}).then(() => {
-  console.log('Connected to MongoDB');
-}).catch((error) => {
-  console.error('MongoDB connection error:', error);
+  useUnifiedTopology: true
 });
 
-// Usar Rotas
-app.use('/api/clients', clientsRouter);
-app.use('/api/advocates', advocatesRouter);
+app.prepare().then(() => {
+  const server = express();
 
-// Rota de teste
-app.get('/', (req, res) => {
-  res.send('API is running...');
-});
-
-// Verificação periódica de atualizações de processos a cada 24 horas
-setInterval(async () => {
-  const clients = await Client.find();
-  clients.forEach(client => {
-    checkUpdates(client);
+  server.all('*', (req, res) => {
+    return handle(req, res);
   });
-}, 86400000); // 24 horas = 86400000 ms
 
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
+  server.listen(process.env.PORT || 3000, (err) => {
+    if (err) throw err;
+    console.log(`> Ready on ${dev ? 'http://localhost:3000' : 'production URL'}`);
+  });
+
+  setInterval(checkUpdates, 86400000); // Verificar a cada 24 horas
 });
