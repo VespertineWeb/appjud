@@ -11,14 +11,11 @@ export default async function handler(req, res) {
   switch (method) {
     case 'POST':
       try {
-        // Log para verificar os dados recebidos
         console.log('Request body:', req.body);
-        
         const advocate = await Advocate.create(req.body);
         console.log('Advocate created:', advocate);
         res.status(201).json({ success: true, data: advocate });
       } catch (error) {
-        // Log para capturar detalhes adicionais do erro
         console.error('Error creating advocate:', error);
         res.status(400).json({ success: false, error: error.message });
       }
