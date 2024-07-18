@@ -1,42 +1,31 @@
-import { useState } from 'react';
-import axios from '../utils/axiosConfig';
+import dbConnect from '../../utils/dbConnect';
+import Advocate from '../../models/Advocate';
 
-export default function Advogados() {
-  const [name, setName] = useState('');
-  const [phone, setPhone] = useState('');
-  const [clients, setClients] = useState([]);
+export default async function handler(req, res) {
+  console.log('Connecting to database...');
+  await dbConnect();
+  console.log('Database connected.');
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    console.log('Enviando dados:', { name, phone, clients });
-    try {
-      const response = await axios.post('/api/advocates', { name, phone, clients });
-      console.log('Resposta do servidor:', response);
-      alert('Advogado cadastrado com sucesso!');
-    } catch (error) {
-      console.error('Erro ao cadastrar advogado:', error);
-      alert('Erro ao cadastrar advogado');
-    }
-  };
+  const { method } = req;
 
-  return (
-    <div>
-      <h1>Cadastro de Advogados</h1>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Nome:</label>
-          <input type="text" value={name} onChange={(e) => setName(e.target.value)} required />
-        </div>
-        <div>
-          <label>Telefone:</label>
-          <input type="text" value={phone} onChange={(e) => setPhone(e.target.value)} required />
-        </div>
-        <div>
-          <label>Clientes:</label>
-          <input type="text" value={clients} onChange={(e) => setClients(e.target.value.split(','))} />
-        </div>
-        <button type="submit">Cadastrar Advogado</button>
-      </form>
-    </div>
-  );
+  switch (method) {
+    case 'POST':
+      try {
+        // Log para verificar os dados recebidos
+        console.log('Request body:', req.body);
+        
+        const advocate = await Advocate.create(req.body);
+        console.log('Advocate created:', advocate);
+        res.status(201).json({ success: true, data: advocate });
+      } catch (error) {
+        // Log para capturar detalhes adicionais do erro
+        console.error('Error creating advocate:', error);
+        res.status(400).json({ success: false, error: error.message });
+      }
+      break;
+    default:
+      res.setHeader('Allow', ['POST']);
+      res.status(405).end(`Method ${method} Not Allowed`);
+      break;
+  }
 }
