@@ -1,10 +1,31 @@
-// models/Advocate.js
-const mongoose = require('mongoose');
+import dbConnect from '../../utils/dbConnect';
+import Advocate from '../../models/Advocate';
 
-const AdvocateSchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  phone: { type: String, required: true },
-  clients: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Client' }],
-});
+export default async function handler(req, res) {
+  console.log('Connecting to database...');
+  await dbConnect();
+  console.log('Database connected.');
 
-module.exports = mongoose.model('Advocate', AdvocateSchema);
+  const { method } = req;
+
+  switch (method) {
+    case 'POST':
+      try {
+        // Log para verificar os dados recebidos
+        console.log('Request body:', req.body);
+        
+        const advocate = await Advocate.create(req.body);
+        console.log('Advocate created:', advocate);
+        res.status(201).json({ success: true, data: advocate });
+      } catch (error) {
+        // Log para capturar detalhes adicionais do erro
+        console.error('Error creating advocate:', error);
+        res.status(400).json({ success: false, error: error.message });
+      }
+      break;
+    default:
+      res.setHeader('Allow', ['POST']);
+      res.status(405).end(`Method ${method} Not Allowed`);
+      break;
+  }
+}
