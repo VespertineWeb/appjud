@@ -1,25 +1,39 @@
 const axios = require('axios');
 const endpoints = require('./endpoints');
 
+const API_KEY = 'cDZHYzlZa0JadVREZDJCendQbXY6SkJlTzNjLV9TRENyQk1RdnFKZGRQdw=='; // Substitua pela sua chave pública
+
 const checkUpdates = async (client) => {
-  const processUpdates = [];
-  
-  for (const key in endpoints) {
-    const apiUrl = endpoints[key];
+  for (const tribunal in endpoints) {
+    const apiUrl = endpoints[tribunal];
     try {
-      const response = await axios.get(`${apiUrl}/${client.caseNumber}`);
-      if (response.data && response.data.hasUpdates) {
-        processUpdates.push({
-          tribunal: key,
-          details: response.data.updateDetails
-        });
+      const response = await axios.post(apiUrl, {
+        query: {
+          match: {
+            numeroProcesso: client.caseNumber
+          }
+        }
+      }, {
+        headers: {
+          'Authorization': `APIKey ${API_KEY}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      const processUpdates = response.data.hits.hits;
+
+      // Verifique se houve atualizações
+      if (processUpdates.length > 0) {
+        const updateDetails = processUpdates[0]._source;
+        // Logica para enviar notificações ou atualizar a UI
+        console.log(`Atualização no processo ${client.caseNumber}: ${JSON.stringify(updateDetails)}`);
+        return updateDetails;
       }
     } catch (error) {
-      console.error(`Erro ao consultar atualizações do processo no tribunal ${key}:`, error);
+      console.error(`Erro ao consultar atualizações no tribunal ${tribunal} para o processo ${client.caseNumber}:`, error.message);
     }
   }
-  
-  return processUpdates.length > 0 ? processUpdates : null;
+  return null;
 };
 
 module.exports = checkUpdates;
