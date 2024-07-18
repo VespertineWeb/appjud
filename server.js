@@ -1,7 +1,7 @@
 const express = require('express');
 const next = require('next');
 const mongoose = require('mongoose');
-const { sendNotification } = require('./utils/sendNotificantio');
+const { sendWhatsAppNotification } = require('./utils/sendNotification');
 const checkUpdates = require('./utils/checkUpdates');
 
 const dev = process.env.NODE_ENV !== 'production';
@@ -9,7 +9,9 @@ const app = next({ dev });
 const handle = app.getRequestHandler();
 
 mongoose.connect(process.env.MONGODB_URI, {
-  serverSelectionTimeoutMS: 5000 // 5 segundos de timeout para seleção do servidor
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  serverSelectionTimeoutMS: 5000, // 5 segundos de timeout para seleção do servidor
 });
 
 app.prepare().then(() => {
