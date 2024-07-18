@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   env: {
     MONGODB_URI: process.env.MONGODB_URI,
     SENDPULSE_USER_ID: process.env.SENDPULSE_USER_ID,
