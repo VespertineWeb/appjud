@@ -1,5 +1,5 @@
-import dbConnect from '../../utils/dbConnect';
-import Advocate from '../../models/Advocate';
+import dbConnect from '../utils/dbConnect';
+import Advocate from '../models/Advocate';
 
 export default async function handler(req, res) {
   console.log('Connecting to database...');
