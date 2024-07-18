@@ -1,9 +1,10 @@
 const axios = require('axios');
 const { sendWhatsAppNotification } = require('./sendNotification');
 const endpoints = require('./endpoints');
+const Client = require('../models/Client');
 
 const checkUpdates = async () => {
-  const clients = await Client.find(); // Certifique-se de que o modelo Client está sendo importado corretamente.
+  const clients = await Client.find();
 
   for (const client of clients) {
     const processNumber = client.caseNumber;
