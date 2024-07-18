@@ -23,11 +23,8 @@ const checkUpdates = async (client) => {
 
       const processUpdates = response.data.hits.hits;
 
-      // Verifique se houve atualizações
       if (processUpdates.length > 0) {
         const updateDetails = processUpdates[0]._source;
-        // Logica para enviar notificações ou atualizar a UI
-        console.log(`Atualização no processo ${client.caseNumber}: ${JSON.stringify(updateDetails)}`);
         sendWhatsAppNotification(client.phone, `Atualização no processo ${client.caseNumber}: ${JSON.stringify(updateDetails)}`);
         return updateDetails;
       }

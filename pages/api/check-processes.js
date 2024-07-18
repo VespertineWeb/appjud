@@ -9,7 +9,6 @@ export default async function handler(req, res) {
   try {
     await dbConnect();
 
-    // Dummy client data for testing
     const client = {
       caseNumber: '00008323520184013202',
       phone: '1234567890'
