@@ -1,21 +1,23 @@
-import connectMongo from '../../lib/mongodb';
+// pages/api/clients.js
+import dbConnect from '../../utils/dbConnect';
 import Client from '../../models/Client';
 
 export default async function handler(req, res) {
-  await connectMongo();
+  await dbConnect();
 
-  if (req.method === 'POST') {
-    const { name, phone, caseNumber } = req.body;
+  const { method } = req;
 
-    try {
-      const client = new Client({ name, phone, caseNumber });
-      await client.save();
-
-      res.status(201).json(client);
-    } catch (error) {
-      res.status(500).json({ error: 'Failed to create client' });
-    }
-  } else {
-    res.status(405).json({ error: 'Method not allowed' });
+  switch (method) {
+    case 'POST':
+      try {
+        const client = await Client.create(req.body);
+        res.status(201).json({ success: true, data: client });
+      } catch (error) {
+        res.status(400).json({ success: false });
+      }
+      break;
+    default:
+      res.status(400).json({ success: false });
+      break;
   }
 }
