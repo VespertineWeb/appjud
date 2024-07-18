@@ -1,14 +1,16 @@
-const axios = require('axios');
-const endpoints = require('./endpoints');
-const { sendWhatsAppNotification } = require('./sendNotification');
+import axios from 'axios';
+import sendNotification from './sendNotification';
+import endpoints from './endpoints';
 
-const API_KEY = 'cDZHYzlZa0JadVREZDJCendQbXY6SkJlTzNjLV9TRENyQk1RdnFKZGRQdw=='; // Substitua pela sua chave pública
+const API_KEY = 'cDZHYzlZa0JadVREZDJCendQbXY6SkJlTzNjLV9TRENyQk1RdnFKZGRQdw==';
 
 const checkUpdates = async (client) => {
-  for (const tribunal in endpoints) {
-    const apiUrl = endpoints[tribunal];
+  const tribunalKeys = Object.keys(endpoints);
+  const processUpdates = [];
+
+  for (const key of tribunalKeys) {
     try {
-      const response = await axios.post(apiUrl, {
+      const response = await axios.post(endpoints[key], {
         query: {
           match: {
             numeroProcesso: client.caseNumber
@@ -21,18 +23,22 @@ const checkUpdates = async (client) => {
         }
       });
 
-      const processUpdates = response.data.hits.hits;
-
-      if (processUpdates.length > 0) {
-        const updateDetails = processUpdates[0]._source;
-        sendWhatsAppNotification(client.phone, `Atualização no processo ${client.caseNumber}: ${JSON.stringify(updateDetails)}`);
-        return updateDetails;
+      const hits = response.data.hits.hits;
+      if (hits.length > 0) {
+        processUpdates.push(hits[0]._source);
       }
     } catch (error) {
-      console.error(`Erro ao consultar atualizações no tribunal ${tribunal} para o processo ${client.caseNumber}:`, error.message);
+      console.error(`Error fetching updates from ${key}:`, error);
     }
   }
+
+  if (processUpdates.length > 0) {
+    // Enviar notificação via SendPulse
+    sendNotification(client.phone, `Atualização no processo ${client.caseNumber}: ${JSON.stringify(processUpdates)}`);
+    return processUpdates;
+  }
+
   return null;
 };
 
-module.exports = checkUpdates;
+export default checkUpdates;
