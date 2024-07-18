@@ -2,7 +2,6 @@ import dbConnect from '../../utils/dbConnect';
 import Client from '../../models/Client';
 
 export default async function handler(req, res) {
-  // Log para verificar a conexão com o banco de dados
   console.log('Connecting to database...');
   await dbConnect();
   console.log('Database connected.');
