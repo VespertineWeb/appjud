@@ -11,8 +11,7 @@ const AdvocateSchema = new mongoose.Schema({
   },
   clients: [
     {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Client',
+      name: String,
     },
   ],
 });

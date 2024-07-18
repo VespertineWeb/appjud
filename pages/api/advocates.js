@@ -21,7 +21,7 @@ function runMiddleware(req, res, fn) {
 }
 
 export default async function handler(req, res) {
-  await runMiddleware(req, res, cors);
+  await runMiddleware(req, res, cors); // Aplicar o middleware de CORS
 
   console.log('Connecting to database...');
   await dbConnect();
@@ -32,14 +32,25 @@ export default async function handler(req, res) {
   switch (method) {
     case 'POST':
       try {
-        console.log('Request body:', req.body);
+        console.log('Request body:', req.body); // Log do corpo da solicitação
 
+        // Validar o corpo da solicitação
         if (!req.body.name || !req.body.phone || !Array.isArray(req.body.clients)) {
           console.error('Invalid request body:', req.body);
           return res.status(400).json({ success: false, error: 'Invalid request body' });
         }
 
-        const advocate = await Advocate.create(req.body);
+        // Certifique-se de que o clients array está formatado corretamente
+        const clientsFormatted = req.body.clients.map(client => ({ name: client }));
+
+        const advocate = new Advocate({
+          name: req.body.name,
+          phone: req.body.phone,
+          clients: clientsFormatted,
+        });
+
+        await advocate.save();
+
         console.log('Advocate created:', advocate);
         res.status(201).json({ success: true, data: advocate });
       } catch (error) {
