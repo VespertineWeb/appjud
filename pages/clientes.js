@@ -7,7 +7,8 @@ export default function Clientes() {
   const [caseNumber, setCaseNumber] = useState('');
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault(); // Previne o comportamento padrão do formulário
+    console.log('Enviando dados:', { name, phone, caseNumber }); // Adiciona log para depuração
     try {
       const response = await axios.post('/api/clients', { name, phone, caseNumber });
       alert('Cliente cadastrado com sucesso!');
@@ -23,15 +24,30 @@ export default function Clientes() {
       <form onSubmit={handleSubmit}>
         <div>
           <label>Nome:</label>
-          <input type="text" value={name} onChange={(e) => setName(e.target.value)} required />
+          <input 
+            type="text" 
+            value={name} 
+            onChange={(e) => setName(e.target.value)} 
+            required 
+          />
         </div>
         <div>
           <label>Telefone:</label>
-          <input type="text" value={phone} onChange={(e) => setPhone(e.target.value)} required />
+          <input 
+            type="text" 
+            value={phone} 
+            onChange={(e) => setPhone(e.target.value)} 
+            required 
+          />
         </div>
         <div>
           <label>Número do Processo:</label>
-          <input type="text" value={caseNumber} onChange={(e) => setCaseNumber(e.target.value)} required />
+          <input 
+            type="text" 
+            value={caseNumber} 
+            onChange={(e) => setCaseNumber(e.target.value)} 
+            required 
+          />
         </div>
         <button type="submit">Cadastrar Cliente</button>
       </form>
