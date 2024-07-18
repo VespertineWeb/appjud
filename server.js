@@ -1,6 +1,7 @@
 const express = require('express');
 const next = require('next');
 const mongoose = require('mongoose');
+const cors = require('cors'); // Adicionar o middleware de CORS
 const { sendNotification } = require('./utils/sendNotificantio');
 const checkUpdates = require('./utils/checkUpdates');
 
@@ -10,11 +11,20 @@ const handle = app.getRequestHandler();
 
 mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
-  useUnifiedTopology: true
+  useUnifiedTopology: true,
+  serverSelectionTimeoutMS: 5000
 });
 
 app.prepare().then(() => {
   const server = express();
+
+  // Configurar CORS
+  const corsOptions = {
+    origin: 'https://appjud-ghmfaevia-afchristianns-projects.vercel.app', // Origem permitida
+    optionsSuccessStatus: 200,
+  };
+
+  server.use(cors(corsOptions));
 
   server.all('*', (req, res) => {
     return handle(req, res);
