@@ -1,36 +1,112 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+Para atualizar o arquivo `README.md` do seu projeto, aqui está um exemplo detalhado que inclui todas as etapas necessárias para configurar e executar o projeto, bem como informações sobre as dependências e as variáveis de ambiente necessárias.
 
-## Getting Started
+```markdown
+# AppJud
 
-First, run the development server:
+AppJud é uma aplicação para gerenciamento de processos judiciais, com cadastro de clientes e advogados, e verificação automática de atualizações nos processos em diversos tribunais brasileiros.
+
+## Requisitos
+
+- Node.js (versão 14 ou superior)
+- MongoDB
+- Conta no SendPulse para envio de notificações via WhatsApp
+
+## Configuração
+
+### 1. Clonar o repositório
+
+```bash
+git clone https://github.com/afchristiann/appjud.git
+cd appjud
+```
+
+### 2. Instalar dependências
+
+```bash
+npm install
+```
+
+### 3. Configurar variáveis de ambiente
+
+Crie um arquivo `.env.local` na raiz do projeto e adicione as seguintes variáveis de ambiente:
+
+```env
+MONGODB_URI=your_mongodb_uri
+SENDPULSE_USER_ID=your_sendpulse_user_id
+SENDPULSE_SECRET=your_sendpulse_secret
+SENDPULSE_TOKEN_STORAGE=your_sendpulse_token_storage
+```
+
+### 4. Iniciar o servidor de desenvolvimento
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+A aplicação estará disponível em [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Estrutura do Projeto
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+```
+/models
+  - Client.js
+  - Process.js
+  - Advocate.js
+/pages
+  /api
+    - check-processes.js
+/utils
+  - dbConnect.js
+  - sendNotification.js
+  - checkUpdates.js
+  - endpoints.js
+```
 
-## Learn More
+## Configuração no Vercel
 
-To learn more about Next.js, take a look at the following resources:
+### 1. Configurar variáveis de ambiente no Vercel
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Certifique-se de adicionar as mesmas variáveis de ambiente configuradas no `.env.local` no painel de configuração do seu projeto no Vercel:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+- `MONGODB_URI`
+- `SENDPULSE_USER_ID`
+- `SENDPULSE_SECRET`
+- `SENDPULSE_TOKEN_STORAGE`
 
-## Deploy on Vercel
+### 2. Fazer deploy
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Após configurar as variáveis de ambiente, você pode fazer o deploy do projeto no Vercel.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+## Endpoints da API
+
+### Cadastro de Clientes
+
+- **URL:** `/api/clients`
+- **Método:** `POST`
+- **Dados do Corpo:** `{ name: String, phone: String, caseNumber: String }`
+
+### Cadastro de Advogados
+
+- **URL:** `/api/advocates`
+- **Método:** `POST`
+- **Dados do Corpo:** `{ name: String, phone: String, clients: Array }`
+
+### Verificação de Processos
+
+- **URL:** `/api/check-processes`
+- **Método:** `GET`
+
+## Lógica de Verificação de Processos
+
+A lógica de verificação de processos está implementada em `utils/checkUpdates.js`. Este arquivo verifica atualizações nos processos em vários tribunais utilizando as APIs listadas em `utils/endpoints.js`.
+
+## Envio de Notificações
+
+As notificações são enviadas via WhatsApp utilizando a API do SendPulse. A lógica de envio está implementada em `utils/sendNotification.js`.
+
+## Licença
+
+Este projeto está licenciado sob os termos da licença MIT.
+```
+
+Este `README.md` fornece um guia completo para configurar e executar o seu projeto, incluindo a configuração de variáveis de ambiente, estrutura do projeto, endpoints da API, e lógica de verificação de processos e envio de notificações. Certifique-se de substituir os placeholders pelas suas informações reais.
