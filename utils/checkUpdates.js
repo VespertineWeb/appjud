@@ -1,6 +1,7 @@
 const axios = require('axios');
 const { sendWhatsAppNotification } = require('./sendNotification');
 const endpoints = require('./endpoints');
+const Client = require('../models/Client');  // Certifique-se de que a importação do modelo está correta
 
 const checkUpdates = async () => {
   // Obtendo todos os clientes
