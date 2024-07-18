@@ -4,16 +4,12 @@
       {
         "src": "pages/api/**/*.js",
         "use": "@vercel/node"
-      },
-      {
-        "src": "next.config.js",
-        "use": "@vercel/next"
       }
     ],
     "routes": [
       {
-        "src": "/api/check-processes",
-        "dest": "/api/check-processes"
+        "src": "/api/(.*)",
+        "dest": "/api/$1"
       }
     ]
   }
