@@ -1,7 +1,28 @@
 import dbConnect from '../../utils/dbConnect';
 import Advocate from '../../models/Advocate';
+import Cors from 'cors';
+
+// Inicializar o middleware de CORS
+const cors = Cors({
+  methods: ['POST', 'GET', 'HEAD'],
+  origin: ['https://appjud-ghmfaevia-afchristianns-projects.vercel.app', 'https://appjud.vercel.app']
+});
+
+// Função auxiliar para rodar o middleware
+function runMiddleware(req, res, fn) {
+  return new Promise((resolve, reject) => {
+    fn(req, res, (result) => {
+      if (result instanceof Error) {
+        return reject(result);
+      }
+      return resolve(result);
+    });
+  });
+}
 
 export default async function handler(req, res) {
+  await runMiddleware(req, res, cors); // Aplicar o middleware de CORS
+
   console.log('Connecting to database...');
   await dbConnect();
   console.log('Database connected.');

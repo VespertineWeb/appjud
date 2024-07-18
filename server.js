@@ -1,7 +1,6 @@
 const express = require('express');
 const next = require('next');
 const mongoose = require('mongoose');
-const cors = require('cors'); // Adicionar o middleware de CORS
 const { sendNotification } = require('./utils/sendNotificantio');
 const checkUpdates = require('./utils/checkUpdates');
 
@@ -16,21 +15,7 @@ mongoose.connect(process.env.MONGODB_URI, {
 app.prepare().then(() => {
   const server = express();
 
-  // Configurar CORS
-  const corsOptions = {
-    origin: ['https://appjud-ghmfaevia-afchristianns-projects.vercel.app', 'https://appjud.vercel.app'], // Origem permitida
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    preflightContinue: false,
-    optionsSuccessStatus: 204,
-    allowedHeaders: ['Content-Type', 'Authorization']
-  };
-
-  server.use(cors(corsOptions));
-
-  server.options('*', cors(corsOptions)); // Enable pre-flight for all routes
-
   server.all('*', (req, res) => {
-    res.header('Access-Control-Allow-Origin', '*'); // Adicionar o cabeçalho diretamente
     return handle(req, res);
   });
 
