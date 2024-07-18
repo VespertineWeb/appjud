@@ -10,9 +10,7 @@ const app = next({ dev });
 const handle = app.getRequestHandler();
 
 mongoose.connect(process.env.MONGODB_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-  serverSelectionTimeoutMS: 5000
+  serverSelectionTimeoutMS: 5000 // 5 segundos de timeout para seleção do servidor
 });
 
 app.prepare().then(() => {
@@ -20,7 +18,7 @@ app.prepare().then(() => {
 
   // Configurar CORS
   const corsOptions = {
-    origin: 'https://appjud-ghmfaevia-afchristianns-projects.vercel.app', // Origem permitida
+    origin: '*', // Permitir todas as origens, ajuste conforme necessário
     optionsSuccessStatus: 200,
   };
 
