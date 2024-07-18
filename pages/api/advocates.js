@@ -2,13 +2,11 @@ import dbConnect from '../../utils/dbConnect';
 import Advocate from '../../models/Advocate';
 import Cors from 'cors';
 
-// Inicializar o middleware de CORS
 const cors = Cors({
   methods: ['POST', 'GET', 'HEAD'],
-  origin: '*' // Altere isso conforme necessário para restringir o acesso
+  origin: '*'
 });
 
-// Função auxiliar para rodar o middleware
 function runMiddleware(req, res, fn) {
   return new Promise((resolve, reject) => {
     fn(req, res, (result) => {
@@ -21,7 +19,7 @@ function runMiddleware(req, res, fn) {
 }
 
 export default async function handler(req, res) {
-  await runMiddleware(req, res, cors); // Aplicar o middleware de CORS
+  await runMiddleware(req, res, cors);
 
   console.log('Connecting to database...');
   await dbConnect();
@@ -32,15 +30,13 @@ export default async function handler(req, res) {
   switch (method) {
     case 'POST':
       try {
-        console.log('Request body:', req.body); // Log do corpo da solicitação
+        console.log('Request body:', req.body);
 
-        // Validar o corpo da solicitação
         if (!req.body.name || !req.body.phone || !Array.isArray(req.body.clients)) {
           console.error('Invalid request body:', req.body);
           return res.status(400).json({ success: false, error: 'Invalid request body' });
         }
 
-        // Certifique-se de que o clients array está formatado corretamente
         const clientsFormatted = req.body.clients.map(client => ({ name: client }));
 
         const advocate = new Advocate({

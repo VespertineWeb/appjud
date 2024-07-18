@@ -1,4 +1,3 @@
-// Usando a sintaxe de importação/exportação ES module
 export default {
   env: {
     MONGODB_URI: process.env.MONGODB_URI,
@@ -7,4 +6,5 @@ export default {
     SENDPULSE_TOKEN_STORAGE: process.env.SENDPULSE_TOKEN_STORAGE,
     NEXT_PUBLIC_API_BASE_URL: process.env.NEXT_PUBLIC_API_BASE_URL
   },
+  reactStrictMode: true
 };
