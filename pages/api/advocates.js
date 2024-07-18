@@ -33,7 +33,7 @@ export default async function handler(req, res) {
     case 'POST':
       try {
         console.log('Request body:', req.body); // Log do corpo da solicitação
-        
+
         // Validar o corpo da solicitação
         if (!req.body.name || !req.body.phone || !Array.isArray(req.body.clients)) {
           console.error('Invalid request body:', req.body);
